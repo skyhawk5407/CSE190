@@ -19,7 +19,7 @@
 
 void ledcircle_select(uint8_t led) {
   // set to high impedence
-  PORT->Group[0].DIRCLR.reg = PORT_PA15 | PORT_PA20 | PORT_PA21 | PORT_PA11 | PORT_PA12;
+  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
   switch (led)
   {
