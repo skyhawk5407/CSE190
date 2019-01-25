@@ -21,6 +21,9 @@ void ledcircle_select(uint8_t led) {
   // set to high impedence
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
+// set to high drive
+Port->Group[0].PINCFG.reg.DRVSTR = 1;  
+
   switch (led)
   {
     case 1:
