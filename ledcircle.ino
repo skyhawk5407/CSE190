@@ -22,7 +22,11 @@ void ledcircle_select(uint8_t led) {
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
 // set to high drive
-Port->Group[0].PINCFG.reg.DRVSTR = 1;  
+//   PORT->Group[0].PINCFG[IO5].bit.DRVSTR = 1;  
+//   PORT->Group[0].PINCFG[IO6].bit.DRVSTR = 1;    
+//   PORT->Group[0].PINCFG[IO7].bit.DRVSTR = 1;  
+//   PORT->Group[0].PINCFG[IO8].bit.DRVSTR = 1;
+//   PORT->Group[0].PINCFG[IO9].bit.DRVSTR = 1;   
 
   switch (led)
   {
