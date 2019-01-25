@@ -1,6 +1,7 @@
 #include <sam.h>
 #include "timer.h"
 
+// TODO(phil): move defines in all files
 #define TIMER_DEFAULT_MS 1000
 
 // TODO(phil): double check this against the manual
