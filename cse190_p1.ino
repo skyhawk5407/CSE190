@@ -8,14 +8,11 @@ extern "C" void __libc_init_array(void);
 
 static char *name = "phil";
 static uint8_t nameLength = 4;
+static uint8_t nameIndex = 0;
 
 static uint8_t volatile enableLEDs;
-static uint8_t volatile nameIndex;
 
 // TODO(phil): move defines in all c files to header files
-#define GET_LSB_NIBBLE(x) ((x) & 0xF)
-#define GET_MSB_NIBBLE(x) (((x) & 0xF) >> 4)
-
 #define GET_BIT(x,i) (((x) & (1 << i)) >> i)
 
 void TC3_Handler(void) {
@@ -25,7 +22,8 @@ void TC3_Handler(void) {
 }
 
 void clearLEDs(uint8_t *onLEDs) {
-  for (int i = 1; i <= 16; i++) {
+  // TODO(phil): make a define for '16'
+  for (int i = 0; i < 16; i++) {
     onLEDs[i] = 0;
   }
 }
@@ -34,13 +32,19 @@ void clearLEDs(uint8_t *onLEDs) {
 uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
   uint8_t reset;
 
-  nameIndex++;
-
-  if (nameIndex == nameLength) {
-    ledcircle_select(0);
+  if (nameIndex >= nameLength) {
     nameIndex = 0;
     reset = 1;
   } else {
+  // TODO(phil): i is broken on LEDS 1,4,7. LED light 2 lights up. 3 sets IO5 to low and 7 sets IO6 to high
+  #if 0
+    char c = 'i';
+
+    onLEDs[0] = 1;
+    onLEDs[3] = 1;
+    /*onLEDs[5] = 1;*/
+    onLEDs[6] = 1;
+  #else
     char c = name[nameIndex];
 
     for (int b = 0; b < 8; b++) {
@@ -48,6 +52,9 @@ uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
         onLEDs[b+offset] = 1;
       }
     }
+  #endif
+
+    nameIndex++;
     reset = 0;
   }
 
@@ -68,10 +75,13 @@ int main(void) {
 
   timer3_init();
   // TODO(phil): make this a define
-  timer3_set(50); // 20 hz
+  timer3_set(1000); // 1 sec 
+  /*timer3_set(50); // 20 hz*/
 
   uint8_t onLEDs[16];
   clearLEDs(onLEDs);
+
+  int flag = 0;
 
   /* === Main Loop === */
   while (1) {
@@ -81,7 +91,9 @@ int main(void) {
 
       uint8_t reset = turnOnLEDs(onLEDs, 0);
       if (!reset) {
-        turnOnLEDs(onLEDs, 8);
+        turnOnLEDs(onLEDs, 7);
+      } else {
+        ledcircle_select(0);
       }
 
       enableLEDs = 0;
