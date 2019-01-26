@@ -26,87 +26,87 @@ void ledcircle_select(uint8_t led) {
   switch (led)
   {
     case 1:
-    {
-      HIGH_LOW(IO5, IO6);
-    } break;
+      {
+        HIGH_LOW(IO5, IO6);
+      } break;
 
     case 2:
-    {
-      HIGH_LOW(IO6, IO5);
-    } break;
+      {
+        HIGH_LOW(IO6, IO5);
+      } break;
 
     case 3:
-    {
-      HIGH_LOW(IO5, IO7);
-    } break;
+      {
+        HIGH_LOW(IO5, IO7);
+      } break;
 
     case 4:
-    {
-      HIGH_LOW(IO7, IO5);
-    } break;
+      {
+        HIGH_LOW(IO7, IO5);
+      } break;
 
     case 5:
-    {
-      HIGH_LOW(IO6, IO7);
-    } break;
+      {
+        HIGH_LOW(IO6, IO7);
+      } break;
 
     case 6:
-    {
-      HIGH_LOW(IO7, IO6);
-    } break;
+      {
+        HIGH_LOW(IO7, IO6);
+      } break;
 
     case 7:
-    {
-      HIGH_LOW(IO6, IO8);
-    } break;
+      {
+        HIGH_LOW(IO6, IO8);
+      } break;
 
     case 8:
-    {
-      HIGH_LOW(IO8, IO6);
-    } break;
+      {
+        HIGH_LOW(IO8, IO6);
+      } break;
 
     case 9:
-    {
-      HIGH_LOW(IO5, IO8);
-    } break;
+      {
+        HIGH_LOW(IO5, IO8);
+      } break;
 
     case 10:
-    {
-      HIGH_LOW(IO8, IO5);
-    } break;
+      {
+        HIGH_LOW(IO8, IO5);
+      } break;
 
     case 11:
-    {
-      HIGH_LOW(IO8, IO7);
-    } break;
+      {
+        HIGH_LOW(IO8, IO7);
+      } break;
 
     case 12:
-    {
-      HIGH_LOW(IO7, IO8);
-    } break;
+      {
+        HIGH_LOW(IO7, IO8);
+      } break;
 
     case 13:
-    {
-      HIGH_LOW(IO9, IO7);
-    } break;
+      {
+        HIGH_LOW(IO9, IO7);
+      } break;
 
     case 14:
-    {
-      HIGH_LOW(IO7, IO9);
-    } break;
+      {
+        HIGH_LOW(IO7, IO9);
+      } break;
 
     case 15:
-    {
-      HIGH_LOW(IO9, IO8);
-    } break;
+      {
+        HIGH_LOW(IO9, IO8);
+      } break;
 
     case 16:
-    {
-      HIGH_LOW(IO8, IO9);
-    } break;
+      {
+        HIGH_LOW(IO8, IO9);
+      } break;
 
     default:
-    {
-    } break;
+      {
+      } break;
   }
 }

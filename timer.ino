@@ -15,16 +15,16 @@
  * INTENSET.MC0=1.
  */
 void timer3_init() {
-	// Setup clock
-	GCLK->CLKCTRL.bit.CLKEN = 1;
-	GCLK->CLKCTRL.bit.GEN = 0;
-	GCLK->CLKCTRL.bit.ID = GCLK_CLKCTRL_ID_TCC2_TC3;
+  // Setup clock
+  GCLK->CLKCTRL.bit.CLKEN = 1;
+  GCLK->CLKCTRL.bit.GEN = 0;
+  GCLK->CLKCTRL.bit.ID = GCLK_CLKCTRL_ID_TCC2_TC3;
   while (GCLK->STATUS.bit.SYNCBUSY);
 
   timer3_reset();
 
-	// Setup timer/counter
-	TC3->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;
+  // Setup timer/counter
+  TC3->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;
   TC3->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_MFRQ;
   TC3->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1024;
   while (TC3->COUNT16.STATUS.bit.SYNCBUSY);

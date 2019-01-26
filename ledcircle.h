@@ -19,8 +19,8 @@ void ledcircle_select(uint8_t led);
  * Second argument is drive the port low
  */
 #define HIGH_LOW(a,b) \
-      PORT->Group[0].DIRSET.reg = a | b; \
-      PORT->Group[0].OUTSET.reg = a;     \
-      PORT->Group[0].OUTCLR.reg = b;     \
+    PORT->Group[0].DIRSET.reg = a | b; \
+    PORT->Group[0].OUTSET.reg = a;     \
+    PORT->Group[0].OUTCLR.reg = b;     \
 
 #endif
