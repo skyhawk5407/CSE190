@@ -19,7 +19,6 @@ void ledcircle_select(uint8_t led) {
    */
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
-  PORT->Group[0].OUTSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
@@ -108,5 +107,9 @@ void ledcircle_select(uint8_t led) {
     default:
       {
       } break;
+  }
+
+  for (int i = 0; i < 32; i++) {
+      PORT->Group[0].PINCFG[i].bit.DRVSTR = 1;
   }
 }

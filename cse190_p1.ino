@@ -10,7 +10,7 @@ static char *name = "phil";
 static uint8_t nameLength = 4;
 static uint8_t nameIndex = 0;
 
-static uint8_t volatile enableLEDs;
+static uint8_t volatile changeLEDs;
 
 #define GET_BIT(x,i) (((x) & (1 << i)) >> i)
 #define NUM_LEDS 16
@@ -19,7 +19,7 @@ static uint8_t volatile enableLEDs;
 
 /* Upper part of TC3 interrupt */
 void TC3_Handler(void) {
-  enableLEDs = 1;
+  changeLEDs = 1;
 
   TC3->COUNT16.INTFLAG.bit.MC0 = 1;
 }
@@ -92,7 +92,7 @@ int main(void) {
   /* === Main Loop === */
   while (1) {
     /* Lower part of TC3 interrupt */
-    if (enableLEDs) {
+    if (changeLEDs) {
       clearLEDs(onLEDs);
 
       // the reset is set on the next called to turnOnLEDs
@@ -111,7 +111,7 @@ int main(void) {
         reset = 0;
       }
 
-      enableLEDs = 0;
+      changeLEDs = 0;
     }
 
     for (int i = 1; i <= 16; i++) {
