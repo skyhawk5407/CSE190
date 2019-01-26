@@ -48,9 +48,11 @@ void timer3_reset() {
 #define CPU_HZ 48000000
 #define TIMER_PRESCALER_DIV 1024
 
+// (1/oscillator frequency) * (ccValue) = seconds
 void timer3_set(uint16_t period_ms) {
   uint16_t hertz = 1000 / period_ms;
   // TODO(phil): how does this work?
+  // 2343 clock ticks?
   uint16_t ccValue = CPU_HZ / (TIMER_PRESCALER_DIV * hertz) - 1;
   TC3->COUNT16.CC[0].reg = ccValue;
   while (TC3->COUNT16.STATUS.bit.SYNCBUSY);

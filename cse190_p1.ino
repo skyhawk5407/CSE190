@@ -75,12 +75,13 @@ int main(void) {
 
   timer3_init();
   // TODO(phil): make this a define
-  timer3_set(1000); // 1 sec 
-  /*timer3_set(50); // 20 hz*/
+  /*timer3_set(1000); // 1 sec */
+  timer3_set(50); // 20 hz
 
   uint8_t onLEDs[16];
   clearLEDs(onLEDs);
 
+//FIXME(phil): remove this
   int flag = 0;
 
   /* === Main Loop === */
@@ -91,7 +92,7 @@ int main(void) {
 
       uint8_t reset = turnOnLEDs(onLEDs, 0);
       if (!reset) {
-        turnOnLEDs(onLEDs, 7);
+        turnOnLEDs(onLEDs, 8);
       } else {
         ledcircle_select(0);
       }

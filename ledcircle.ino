@@ -18,9 +18,15 @@
       PORT->Group[0].OUTCLR.reg = b; \
 
 void ledcircle_select(uint8_t led) {
+  // insane clear hahahhahaha TODO(phil): explain this
   // set to high impedence
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+  PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+  PORT->Group[0].OUTSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+  PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
+// TODO: replace high impedence with gurantee gnd or vcc parallel
   switch (led)
   {
     case 1:
