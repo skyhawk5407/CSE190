@@ -63,7 +63,6 @@ void timer3_reset() {
   while (TC3->COUNT16.CTRLA.bit.SWRST);
 }
 
-// (1/oscillator frequency) * (ccValue) = seconds
 /*
  * timer3_set - Set the period that the timer will fire (in milliseconds). A
  * timer interrupt (TC3_Handler) will be fired for each timer period.
