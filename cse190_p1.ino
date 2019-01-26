@@ -83,7 +83,7 @@ int main(void) {
   timer3_init();
   timer3_set(TIMER_PERIOD_MS);
 
-  uint8_t onLEDs[16];
+  uint8_t onLEDs[NUM_LEDS];
   clearLEDs(onLEDs);
 
   uint8_t reset = 0;
@@ -97,7 +97,7 @@ int main(void) {
       if (!reset) {
         reset = turnOnLEDs(onLEDs, 0);
         if (!reset) {
-          reset = turnOnLEDs(onLEDs, 8);
+          reset = turnOnLEDs(onLEDs, NUM_BITS_IN_BYTE);
         } else {
           // odd length reset
           ledcircle_select(0);
