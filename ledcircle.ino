@@ -12,10 +12,10 @@ void ledcircle_select(uint8_t led) {
    * impedence (DIRCLR) does not seem to work. The case we ran into was turning
    * on LED 1, 4, and 7 at the same time allow LED 2 to be dimly lit. We think
    * this is because D7 sets IO6 to high and D4 sets IO5 to low such that the
-   * high impedence was not set fast on both wires for D2 dinode to be ignited.
-   * By triggering all GPIO pins from high impedence, output drive high, output
-   * drive low, and back to high impedence, this is harder for the case we had
-   * to occur.
+   * high impedence was not set fast enough on both wires for D2 dinode to be
+   * ignited.  By triggering all GPIO pins from high impedence, output drive
+   * high, output drive low, and back to high impedence, this is harder for the
+   * case we had to occur.
    */
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
