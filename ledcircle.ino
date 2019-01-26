@@ -8,14 +8,14 @@
 void ledcircle_select(uint8_t led) {
 
   /*
-   * This almost gurantees that all other LEDs are turned off. Just using high
-   * impedence (DIRCLR) does not seem to work. The case we ran into was turning
-   * on LED 1, 4, and 7 at the same time allow LED 2 to be dimly lit. We think
-   * this is because D7 sets IO6 to high and D4 sets IO5 to low such that the
-   * high impedence was not set fast enough on both wires for D2 dinode to be
-   * ignited.  By triggering all GPIO pins from high impedence, output drive
-   * high, output drive low, and back to high impedence, this is harder for the
-   * case we had to occur.
+   * This almost guarantees that all other LEDs are turned off. Just using high
+   * impedance (DIRCLR) does not seem to work. The case we ran into was turning
+   * on LED 1, 4, and 7 at the same time which allows LED 2 to be dimly lit. We
+   * think this is because D7 drives IO6 high and D4 drives IO5 low such that
+   * the high impedance was not set fast enough on both wires for D2 diode to
+   * be ignited.  By setting all GPIO pins to high impedance, then output
+   * drives high, output drive low, and back to high impedance, this is made it
+   * harder for the case we had to occur.
    */
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;

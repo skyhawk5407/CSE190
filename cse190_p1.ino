@@ -17,6 +17,7 @@ static uint8_t volatile enableLEDs;
 #define TIMER_PERIOD_MS 50
 #define NUM_BITS_IN_BYTE 8
 
+/* Upper part of TC3 interrupt */
 void TC3_Handler(void) {
   enableLEDs = 1;
 
@@ -90,6 +91,7 @@ int main(void) {
 
   /* === Main Loop === */
   while (1) {
+    /* Lower part of TC3 interrupt */
     if (enableLEDs) {
       clearLEDs(onLEDs);
 

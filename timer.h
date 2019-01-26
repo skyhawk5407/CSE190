@@ -33,7 +33,28 @@ void timer3_init();
  */
 void timer3_reset();
 
-// TODO(phil): add comment header
+/*
+ * timer3_set - Set the period that the timer will fire (in milliseconds). A
+ * timer interrupt (TC3_Handler) will be fired for each timer period.
+ *
+ * @period_ms - length of the period in milliseconds where the interrupt will be called
+ *
+ * Example 1: period_ms = 1000 ms (1 second)
+ * First, we convert milliseconds to hertz.
+ * 1000 mHz / 1000 ms = 1 Hz
+ * Then to get the ccValue we take the CPU hertz since we are using generator 0
+ * and divide it by the prescaler times the period hertz. We minus 1 because we
+ * want it to reset right when we match CC0.
+ * ccValue = (48,000,000)/(1,024 * 1) = 46,875
+ * To get how many seconds the interrupt will be fired, we multiply the
+ * 1/(oscillator frequency) which is 1/(cpu hz prescaled).
+ * 1/(48,000,000/1,024) * (46,875) = 1 second
+ *
+ * Example 2: period_ms = 50 ms
+ * 1000 mHz / 50 ms = 20 Hz
+ * ccValue = (48,000,000)/(1,024 * 20) = 2343
+ * 1/(48,000,000/1,024) * 2343 = 0.05 second = 50 millisecond
+ */
 void timer3_set(uint16_t period_ms);
 
 #endif
