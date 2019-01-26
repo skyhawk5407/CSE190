@@ -1,32 +1,28 @@
 #include <sam.h>
 #include "ledcircle.h"
 
-#define IO5 PORT_PA15
-#define IO6 PORT_PA20
-#define IO7 PORT_PA21
-#define IO8 PORT_PA06
-#define IO9 PORT_PA07
-
 /*
- * Set these port as output
- * First argument is drive the port high
- * Second argument is drive the port low
+ * ledcircle_select - Turn on the selected LED. Turn off all other LEDs.
+ * @led - Charlieplexed LEDs D1-16
  */
-#define HIGH_LOW(a,b) \
-      PORT->Group[0].DIRSET.reg = a | b; \
-      PORT->Group[0].OUTSET.reg = a; \
-      PORT->Group[0].OUTCLR.reg = b; \
-
 void ledcircle_select(uint8_t led) {
-  // insane clear hahahhahaha TODO(phil): explain this
-  // set to high impedence
+
+  /*
+   * This almost gurantees that all other LEDs are turned off. Just using high
+   * impedence (DIRCLR) does not seem to work. The case we ran into was turning
+   * on LED 1, 4, and 7 at the same time allow LED 2 to be dimly lit. We think
+   * this is because D7 sets IO6 to high and D4 sets IO5 to low such that the
+   * high impedence was not set fast on both wires for D2 dinode to be ignited.
+   * By triggering all GPIO pins from high impedence, output drive high, output
+   * drive low, and back to high impedence, this is harder for the case we had
+   * to occur.
+   */
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
 
-// TODO: replace high impedence with gurantee gnd or vcc parallel
   switch (led)
   {
     case 1:

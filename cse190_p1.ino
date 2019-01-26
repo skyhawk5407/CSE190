@@ -12,8 +12,10 @@ static uint8_t nameIndex = 0;
 
 static uint8_t volatile enableLEDs;
 
-// TODO(phil): move defines in all c files to header files
 #define GET_BIT(x,i) (((x) & (1 << i)) >> i)
+#define NUM_LEDS 16
+#define TIMER_PERIOD_MS 50
+#define NUM_BITS_IN_BYTE 8
 
 void TC3_Handler(void) {
   enableLEDs = 1;
@@ -21,14 +23,26 @@ void TC3_Handler(void) {
   TC3->COUNT16.INTFLAG.bit.MC0 = 1;
 }
 
+/*
+ * clearLEDs - Set array onLEDs to zero.
+ *
+ * @onLEDs: array that corresponds to the state of an LED light (0=off, 1=on)
+ */
 void clearLEDs(uint8_t *onLEDs) {
-  // TODO(phil): make a define for '16'
-  for (int i = 0; i < 16; i++) {
+  for (int i = 0; i < NUM_LEDS; i++) {
     onLEDs[i] = 0;
   }
 }
 
-// return value is reset occurs
+/*
+ * turnOnLEDs - set leds by bits given by character in name array.
+ *
+ * @onLEDs: array that corresponds to the state of an LED light (0=off, 1=on)
+ * @offset: what led should the second character start at since we are showing
+ * two bytes at a time
+ *
+ * return: status flag representing when to turn off all leds (reset state)
+ */
 uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
   uint8_t reset;
 
@@ -36,23 +50,13 @@ uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
     nameIndex = 0;
     reset = 1;
   } else {
-  // TODO(phil): i is broken on LEDS 1,4,7. LED light 2 lights up. 3 sets IO5 to low and 7 sets IO6 to high
-  #if 0
-    char c = 'i';
-
-    onLEDs[0] = 1;
-    onLEDs[3] = 1;
-    /*onLEDs[5] = 1;*/
-    onLEDs[6] = 1;
-  #else
     char c = name[nameIndex];
 
-    for (int b = 0; b < 8; b++) {
+    for (int b = 0; b < NUM_BITS_IN_BYTE; b++) {
       if (GET_BIT(c,b)) {
         onLEDs[b+offset] = 1;
       }
     }
-  #endif
 
     nameIndex++;
     reset = 0;
@@ -61,7 +65,10 @@ uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
   return reset;
 }
 
-// TODO(phil): add header comments to all functions
+/*
+ * main - high data rate (320 bits per second), short-range visual light
+ * communication system
+ */
 int main(void) {
   /* ==== DO NOT REMOVE: USB configuration ==== */
   init();
@@ -74,27 +81,32 @@ int main(void) {
   ledcircle_select(0);
 
   timer3_init();
-  // TODO(phil): make this a define
-  /*timer3_set(1000); // 1 sec */
-  timer3_set(50); // 20 hz
+  timer3_set(TIMER_PERIOD_MS);
 
   uint8_t onLEDs[16];
   clearLEDs(onLEDs);
 
-//FIXME(phil): remove this
-  int flag = 0;
+  uint8_t reset = 0;
 
   /* === Main Loop === */
   while (1) {
-    // TODO Your implementation here
     if (enableLEDs) {
       clearLEDs(onLEDs);
 
-      uint8_t reset = turnOnLEDs(onLEDs, 0);
+      // the reset is set on the next called to turnOnLEDs
       if (!reset) {
-        turnOnLEDs(onLEDs, 8);
+        reset = turnOnLEDs(onLEDs, 0);
+        if (!reset) {
+          reset = turnOnLEDs(onLEDs, 8);
+        } else {
+          // odd length reset
+          ledcircle_select(0);
+          reset = 0;
+        }
       } else {
+        // even length reset
         ledcircle_select(0);
+        reset = 0;
       }
 
       enableLEDs = 0;
