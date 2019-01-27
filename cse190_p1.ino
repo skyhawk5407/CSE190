@@ -3,12 +3,22 @@
 #include "ledcircle.h"
 #include "timer.h"
 
+#define PIN_IO5 31
+#define PIN_IO6 29
+#define PIN_IO7 27
+#define PIN_IO8 25
+#define PIN_IO9 23
+
 /* === DO NOT REMOVE: Initialize C library === */
 extern "C" void __libc_init_array(void);
 
 static char *name = "phil";
 static uint8_t nameLength = 4;
 static uint8_t nameIndex = 0;
+
+enum State { CHAR_STATE, RESET_STATE };
+
+static uint8_t state = 0;
 
 static uint8_t volatile changeLEDs;
 
@@ -36,34 +46,21 @@ void clearLEDs(uint8_t *onLEDs) {
 }
 
 /*
+* TODO(phil): fixme
  * turnOnLEDs - set leds by bits given by character in name array.
  *
  * @onLEDs: array that corresponds to the state of an LED light (0=off, 1=on)
  * @offset: what led should the second character start at since we are showing
  * two bytes at a time
- *
- * return: status flag representing when to turn off all leds (reset state)
  */
-uint8_t turnOnLEDs(uint8_t *onLEDs, uint8_t offset) {
-  uint8_t reset;
+void turnOnLEDs(uint8_t *onLEDs, uint8_t offset, char *name, uint8_t index) {
+  char c = name[index];
 
-  if (nameIndex >= nameLength) {
-    nameIndex = 0;
-    reset = 1;
-  } else {
-    char c = name[nameIndex];
-
-    for (int b = 0; b < NUM_BITS_IN_BYTE; b++) {
-      if (GET_BIT(c,b)) {
-        onLEDs[b+offset] = 1;
-      }
+  for (int b = 0; b < NUM_BITS_IN_BYTE; b++) {
+    if (GET_BIT(c,b)) {
+      onLEDs[b+offset] = 1;
     }
-
-    nameIndex++;
-    reset = 0;
   }
-
-  return reset;
 }
 
 /*
@@ -87,31 +84,46 @@ int main(void) {
   uint8_t onLEDs[NUM_LEDS];
   clearLEDs(onLEDs);
 
-  uint8_t reset = 0;
+  State state = CHAR_STATE;
+
+  PORT->Group[0].PINCFG[PIN_IO5].bit.DRVSTR = 1;
+  PORT->Group[0].PINCFG[PIN_IO6].bit.DRVSTR = 1;
+  PORT->Group[0].PINCFG[PIN_IO7].bit.DRVSTR = 1;
+  PORT->Group[0].PINCFG[PIN_IO8].bit.DRVSTR = 1;
+  PORT->Group[0].PINCFG[PIN_IO9].bit.DRVSTR = 1;
 
   /* === Main Loop === */
   while (1) {
     /* Lower part of TC3 interrupt */
     if (changeLEDs) {
+      changeLEDs = 0;
       clearLEDs(onLEDs);
 
-      // the reset is set on the next called to turnOnLEDs
-      if (!reset) {
-        reset = turnOnLEDs(onLEDs, 0);
-        if (!reset) {
-          reset = turnOnLEDs(onLEDs, NUM_BITS_IN_BYTE);
-        } else {
-          // odd length reset
-          ledcircle_select(0);
-          reset = 0;
-        }
-      } else {
-        // even length reset
-        ledcircle_select(0);
-        reset = 0;
-      }
+      switch (state) {
+        case CHAR_STATE:
+        {
+          turnOnLEDs(onLEDs, 0, name, nameIndex);
+          nameIndex++;
 
-      changeLEDs = 0;
+          if (nameIndex >= nameLength) { // odd check
+            state = RESET_STATE;
+          } else {
+            turnOnLEDs(onLEDs, NUM_BITS_IN_BYTE, name, nameIndex);
+            nameIndex++;
+          }
+
+          if (nameIndex >= nameLength) { // even check
+            state = RESET_STATE;
+          }
+        } break;
+
+        case RESET_STATE:
+        {
+          nameIndex = 0;
+          state = CHAR_STATE;
+          ledcircle_select(0);
+        } break;
+      }
     }
 
     for (int i = 1; i <= 16; i++) {

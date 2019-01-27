@@ -1,6 +1,12 @@
 #include <sam.h>
 #include "ledcircle.h"
 
+#define PIN_IO5 31
+#define PIN_IO6 29
+#define PIN_IO7 27
+#define PIN_IO8 25
+#define PIN_IO9 23
+
 /*
  * ledcircle_select - Turn on the selected LED. Turn off all other LEDs.
  * @led - Charlieplexed LEDs D1-16
@@ -17,7 +23,6 @@ void ledcircle_select(uint8_t led) {
    * drives high, output drive low, and back to high impedance, this is made it
    * harder for the case we had to occur.
    */
-  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
@@ -107,9 +112,5 @@ void ledcircle_select(uint8_t led) {
     default:
       {
       } break;
-  }
-
-  for (int i = 0; i < 32; i++) {
-      PORT->Group[0].PINCFG[i].bit.DRVSTR = 1;
   }
 }
