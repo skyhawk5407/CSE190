@@ -9,6 +9,10 @@
 #define PIN_IO8 25
 #define PIN_IO9 23
 
+#define GET_BIT(x,i) (((x) & (1 << i)) >> i)
+#define NUM_LEDS 16
+#define NUM_BITS_IN_BYTE 8
+
 /* === DO NOT REMOVE: Initialize C library === */
 extern "C" void __libc_init_array(void);
 
@@ -21,11 +25,6 @@ enum State { CHAR_STATE, RESET_STATE };
 static uint8_t state = 0;
 
 static uint8_t volatile changeLEDs;
-
-#define GET_BIT(x,i) (((x) & (1 << i)) >> i)
-#define NUM_LEDS 16
-#define TIMER_PERIOD_MS 50
-#define NUM_BITS_IN_BYTE 8
 
 /* Upper part of TC3 interrupt */
 void TC3_Handler(void) {
@@ -79,7 +78,7 @@ int main(void) {
   ledcircle_select(0);
 
   timer3_init();
-  timer3_set(TIMER_PERIOD_MS);
+  //timer3_set(TIMER_PERIOD_MS);
 
   uint8_t onLEDs[NUM_LEDS];
   clearLEDs(onLEDs);
