@@ -29,7 +29,7 @@ void timer3_init() {
   TC3->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1024;
   while (TC3->COUNT16.STATUS.bit.SYNCBUSY);
 
-  timer3_set(50);
+  timer3_set(TIMER_PERIOD_MS);
 
   // Enable the TC3 interrupt request
   TC3->COUNT16.INTENSET.bit.MC0 = 1;

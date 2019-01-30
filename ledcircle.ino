@@ -24,16 +24,18 @@ void ledcircle_select(uint8_t led) {
    * drives high, output drive low, and back to high impedance, this is made it
    * harder for the case we had to occur.
    */
-  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+/*  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
-  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
+  PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9; */
 #endif
 
+// Set Low output -> Output declar -> High imped
+  PORT->Group[0].OUTCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRSET.reg = IO5 | IO6 | IO7 | IO8 | IO9;
   PORT->Group[0].DIRCLR.reg = IO5 | IO6 | IO7 | IO8 | IO9;
-
+  
   switch (led)
   {
     case 1:
@@ -120,9 +122,13 @@ void ledcircle_select(uint8_t led) {
       {
       } break;
   }
-
-  // Bright lights
-  /*for (int i = 0; i < 32; i++) {
+    // Bright lights
+  for (int i = 0; i < 1; i++) {
     PORT->Group[0].PINCFG[PIN_IO5].bit.DRVSTR = i;
-  }*/
+	PORT->Group[0].PINCFG[PIN_IO6].bit.DRVSTR = i;
+	PORT->Group[0].PINCFG[PIN_IO7].bit.DRVSTR = i;
+	PORT->Group[0].PINCFG[PIN_IO8].bit.DRVSTR = i;
+	PORT->Group[0].PINCFG[PIN_IO9].bit.DRVSTR = i;
+	
+  } 
 }

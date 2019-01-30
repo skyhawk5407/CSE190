@@ -5,6 +5,7 @@
 #define CPU_HZ 48000000
 #define PRESCALER_DIV 1024
 #define ONE_mHZ 1000
+#define TIMER_PERIOD_MS 50
 
 /*
  * timer3_init - Setup timer 3. Stop the timer, clear out any timer state and

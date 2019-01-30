@@ -20,7 +20,7 @@ static char *name = "phil";
 static uint8_t nameLength = 4;
 static uint8_t nameIndex = 0;
 
-enum State { CHAR_STATE, RESET_STATE };
+enum State { CHAR_STATE, RESET_STATE, TRANS_STATE };
 
 static uint8_t state = 0;
 
@@ -85,41 +85,82 @@ int main(void) {
 
   State state = RESET_STATE;
 
+// note we have bleed between two states, so the next bytestream is turning on early before the clear.
   /* === Main Loop === */
   while (1) {
     /* Lower part of TC3 interrupt */
     if (changeLEDs) {
       changeLEDs = 0;
-      ledcircle_select(0);
-      clearLEDs(onLEDs);
 
-      switch (state) {
-        case CHAR_STATE:
-        {
-          turnOnLEDs(onLEDs, 0, name, nameIndex);
-          nameIndex++;
+		switch (state) {
+			case CHAR_STATE:
+			{
+			  turnOnLEDs(onLEDs, 0, name, nameIndex);
+			  nameIndex++;
 
-          if (nameIndex >= nameLength) { // odd check
-            state = RESET_STATE;
-          } else {
-            turnOnLEDs(onLEDs, NUM_BITS_IN_BYTE, name, nameIndex);
-            nameIndex++;
-          }
+			  if (nameIndex >= nameLength) { // odd check
+				state = RESET_STATE;
+			  } else {
+				turnOnLEDs(onLEDs, NUM_BITS_IN_BYTE, name, nameIndex);
+				nameIndex++;
+			  }
 
-          if (nameIndex >= nameLength) { // even check
-            state = RESET_STATE;
-          }
-        } break;
-
-        case RESET_STATE:
-        {
-          nameIndex = 0;
-          state = CHAR_STATE;
-          ledcircle_select(0);
-        } break;
-      }
-    }
-
+			  if (nameIndex >= nameLength) { // even check
+				state = RESET_STATE;
+			  }
+			} break;
+			
+			// added buffer state for preventig bleed
+			case TRANS_STATE:
+			{
+			  ledcircle_select(0);	
+			  clearLEDs(onLEDs);
+			  state = CHAR_STATE;			
+			} break;
+			case RESET_STATE:
+			{
+			  clearLEDs(onLEDs);
+			  counter = 0;
+			  nameIndex = 0;
+			  state = CHAR_STATE;
+			} break;
+		}
+	}
+	
+	// somehow we are turning on LED Early or not transitioning between two 
+	for (uint8_t i = 1; i <= 16 && !changeLEDs; i++) {
+		  if (onLEDs[i-1]) {
+			ledcircle_select(i);
+		  } 
+		  /* else {ledcircle_select(0);) */
+		  // note that bc we dont expl. select the onleds that are  zero, its possible for interrupt to fire and have bleed
+		}
+	/*
+	if (state == RESET_STATE) {
+		ledcircle_select(0);
+	} else {
+		for (uint8_t i = 1; i <= 16; i++) {
+		  if (onLEDs[i-1]) {
+			ledcircle_select(i);
+		  }
+		}
+	} // cant run else here, won't ever have time to update with next bit? 
+	
+	if (counter == 1) {
+		for (uint8_t i = 1; i <= 16; i++) {
+		  if (onLEDs[i-1]) {
+			ledcircle_select(i);
+		  }
+		}
+	} else if (counter == 2) {
+		for (uint8_t i = 1; i <= 16; i++) {
+		  if (onLEDs[i-1]) {
+			ledcircle_select(i);
+		  }
+		}
+	}
+	*/
+/*
 #if 1
     for (int i = 1; i <= 16; i++) {
       if (onLEDs[i-1]) {
@@ -131,7 +172,8 @@ int main(void) {
         ledcircle_select(4);
         ledcircle_select(7);
 #endif
-  }
+*/
+ }
 
   return 0;
 }
