@@ -16,8 +16,8 @@
 /* === DO NOT REMOVE: Initialize C library === */
 extern "C" void __libc_init_array(void);
 
-static char *name = "phil";
-static uint8_t nameLength = 4;
+static char *name = "vincent";
+static uint8_t nameLength = 7;
 static uint8_t nameIndex = 0;
 
 enum State { CHAR_STATE, RESET_STATE, TRANS_STATE };
@@ -91,13 +91,13 @@ int main(void) {
     /* Lower part of TC3 interrupt */
     if (changeLEDs) {
       changeLEDs = 0;
-
+	 // ledcircle_select(0);	
 		switch (state) {
 			case CHAR_STATE:
 			{
 			  turnOnLEDs(onLEDs, 0, name, nameIndex);
 			  nameIndex++;
-
+			  state = TRANS_STATE;
 			  if (nameIndex >= nameLength) { // odd check
 				state = RESET_STATE;
 			  } else {
@@ -120,7 +120,7 @@ int main(void) {
 			case RESET_STATE:
 			{
 			  clearLEDs(onLEDs);
-			  counter = 0;
+			 // counter = 0;
 			  nameIndex = 0;
 			  state = CHAR_STATE;
 			} break;
