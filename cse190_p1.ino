@@ -83,19 +83,14 @@ int main(void) {
   uint8_t onLEDs[NUM_LEDS];
   clearLEDs(onLEDs);
 
-  State state = CHAR_STATE;
-
-  PORT->Group[0].PINCFG[PIN_IO5].bit.DRVSTR = 1;
-  PORT->Group[0].PINCFG[PIN_IO6].bit.DRVSTR = 1;
-  PORT->Group[0].PINCFG[PIN_IO7].bit.DRVSTR = 1;
-  PORT->Group[0].PINCFG[PIN_IO8].bit.DRVSTR = 1;
-  PORT->Group[0].PINCFG[PIN_IO9].bit.DRVSTR = 1;
+  State state = RESET_STATE;
 
   /* === Main Loop === */
   while (1) {
     /* Lower part of TC3 interrupt */
     if (changeLEDs) {
       changeLEDs = 0;
+      ledcircle_select(0);
       clearLEDs(onLEDs);
 
       switch (state) {
@@ -125,11 +120,17 @@ int main(void) {
       }
     }
 
+#if 1
     for (int i = 1; i <= 16; i++) {
       if (onLEDs[i-1]) {
         ledcircle_select(i);
       }
     }
+#else
+        ledcircle_select(1);
+        ledcircle_select(4);
+        ledcircle_select(7);
+#endif
   }
 
   return 0;
